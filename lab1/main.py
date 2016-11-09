@@ -19,30 +19,26 @@ def main():
 # pylint: disable=C0103
     """Entry point for the app."""
     # dimension
-    N = 4
+    N = 3
 
     # set up model parameters
     # weights
-    M1 = 2
-    M2 = 3
+    C1 = 2
+    C2 = 3
 
     # friction forces
-    B = 4
-    B1 = 3
-    B2 = 5
+    R1 = 3
+    R2 = 5
 
     # stiffnesses
-    K = 2
-    K1 = 2
-    K2 = 2
+    L = 2
 
     # set up start set M0
-    A0 = [1, 1, 1, 1]
-    QV1 = [1, 0, 0, 0]
-    QV2 = [0, 1, 0, 0]
-    QV3 = [0, 0, 1, 0]
-    QV4 = [0, 0, 0, 1]
-    Q0_SEMI_AXES = [1, 2, 3, 4]
+    A0 = [1, 1, 1]
+    QV1 = [1, 0, 0]
+    QV2 = [0, 1, 0]
+    QV3 = [0, 0, 1]
+    Q0_SEMI_AXES = [1, 2, 3]
     Q0_LAMBDA = [
         [
             (0 if j != i else 1/Q0_SEMI_AXES[i]**2) for j in range(N)
@@ -50,7 +46,7 @@ def main():
         for i in range(N)
     ]
 
-    Q0_EIGEN_VECTORS_MATRIX = np.transpose([QV1, QV2, QV3, QV4])
+    Q0_EIGEN_VECTORS_MATRIX = np.transpose([QV1, QV2, QV3])
     Q0_EIGEN_VECTORS_MATRIX_INV = np.linalg.inv(Q0_EIGEN_VECTORS_MATRIX)
 
     Q0 = np.dot(Q0_EIGEN_VECTORS_MATRIX, Q0_LAMBDA)
@@ -64,17 +60,15 @@ def main():
 
     # set up matrix of the system (i. e. matrix A(t))
     A = [
-        [0, 1, 0, 0],
-        [-(K + K1)/M1, -(B + B1)/M1, K/M1, B/M1],
-        [0, 0, 0, 1],
-        [K/M2, B/M2, -(K + K2)/M2, -(B + B2)/M2]
+        [-(1/R1+1/R2)/C1, 1/(R2*C1), 0],
+        [-(1/R1+1/R2)/C1, -(R2/L-1/(R2*C1)), R2/L],
+        [1/(C2*R2), -1/(C2*R2), 0]
     ]
 
     C = [
-        [0, 0],
-        [1/M1, 0],
-        [0, 0],
-        [0, -1/M2]
+        [1/(R1*C1), 0],
+        [0, 1/(R1*C1)],
+        [0, 0]
     ]
 
     T_START = 0 # T_START - start of time
